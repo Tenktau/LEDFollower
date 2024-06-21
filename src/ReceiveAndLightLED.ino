@@ -1,68 +1,47 @@
 #include <FastLED.h>
+#include <ArduinoJson.h>
+#include <SoftwareSerial.h>
 #define NUM_LEDS 5 // 定义 led 数量
 #define DATA_PIN 3 // 定义 开发板的IO 3 为数据引脚
-#define numdata_length 2
-String cmd = "";
-int numdata[numdata_length] = {0};
-int flag = 0;
-int x = 0;
+
+SoftwareSerial softSerial(10,11);
+volatile int pos_x;
+volatile char ch;
+String json;
 CRGB leds[NUM_LEDS]; // 定义CRGB的led等数组
 
 void setup() {
   FastLED.addLeds<NEOPIXEL, DATA_PIN>(leds, NUM_LEDS);
+  pos_x = 0;
+  ch = 0;
+  json = "";
   Serial.begin(115200);
+  softSerial.begin(115200);
   Serial.println("Serial initialized successfully.");
 }
 
 void loop() {
-  int j = 0;
-  while (Serial.available() > 0){
-    cmd += char(Serial.read());
-    delay(2);
-    flag = 1;
-  }
-  while (flag == 1){
-    for (int i=0 ; i< cmd.length() ; i++){
-      if (cmd[i] == ','){
-        j++;
+  if (softSerial.available() > 0) {
+    ch = char(softSerial.read());
+    json = String(json) + String(ch);
+    if (ch == '}') {
+      JsonDocument doc; //声明一个JsonDocument对象
+      deserializeJson(doc, json);
+      JsonObject obj = doc.as<JsonObject>();
+      int pos_x = doc["pos_x"];
+      if (pos_x != 0){
+        int index = pos_x/30;
+        leds[index] = CRGB::White;
+        FastLED.show();
+        // leds[index] = CRGB::Black;
+        delay(1000);
       }
       else{
-        numdata[j] = numdata[j]*10 + (cmd[i] - '0');
+        leds[4] = CRGB::Green;
       }
-    }
-  cmd = String("");
-
-  if (numdata[0] <= 30){
-    x = 0;
-    numdata[0] = 0;
+      json = "";
+      }
   }
-  else if (numdata[0] <= 60){
-    x = 1;
-    numdata[0] = 0;
-  }
-  else if (numdata[0] <= 90){
-    x = 2;
-    numdata[0] = 0;
-  }
-  else if (numdata[0] <= 120){
-    x = 3;
-    numdata[0] = 0;
-  }
-  else if (numdata[0] <= 150){
-    x = 4;
-    numdata[0] = 0;
-  }
-  else{
-    x = 0;
-    numdata[0] = 0;
-  }
-
-  leds[x] = CRGB::White;
-  FastLED.show();
-  delay(500);
-  leds[x] = CRGB::Black;
-  FastLED.show();
-  flag = 0;
   }
 
   // // 每一个led逐个闪烁绿色
@@ -94,5 +73,5 @@ void loop() {
   // }
   // FastLED.show();
 
-  delay(1000);
-}
+  // delay(1000);
+// }

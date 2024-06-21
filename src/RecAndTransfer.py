@@ -2,6 +2,7 @@ import sensor
 import image
 import time
 import math
+import json
 from pyb import UART
 
 uart = UART(2, 115200)
@@ -29,9 +30,14 @@ while True:
     ):  # defaults to TAG36H11 without "families".
         img.draw_rectangle(tag.rect(), color=(255, 0, 0))
         img.draw_cross(tag.cx(), tag.cy(), color=(0, 255, 0))
-        print_args = (family_name(tag), tag.id(), tag.cx(), tag.cy(), (180 * tag.rotation()) / math.pi)
-        str_buffer = (tag.cx(), tag.cy())
-        uart.write("%d,%d" % str_buffer)
-        print("==================\nSending fllowing message through UART: \n%d,%d" % str_buffer)
-        print("Tag Family %s, Tag ID %d, POS:(%d,%d), rotation %f (degrees)" % print_args)
+        tag_rot = ((180 * tag.rotation()) / math.pi)
+        data = {
+        "tag_id":tag.id(),
+        "pos_x":tag.cx(),
+        "pos_y":tag.cy(),
+        "tag_rot":tag_rot
+        }
+        msg = json.dumps(data)
+        uart.write(msg + '\n')
+        print("==================\nSending fllowing json message through UART: \n",msg)
 #    print(clock.fps())
