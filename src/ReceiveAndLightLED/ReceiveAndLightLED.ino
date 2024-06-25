@@ -24,10 +24,15 @@ void setup() {
 void loop() {
   if (softSerial.available() > 0) {
     Serial.print("======Loop Begin======\n");       //TestPoint
-    input = softSerial.readStringUntil('\n');
+    input = softSerial.readStringUntil('}');
     input.trim();
+    input += "}";
     Serial.print("====== Input: ");       //TestPoint
     Serial.print(input);       //TestPoint
+    Serial.print("======\n");       //TestPoint
+    const char* json = input.c_str();
+    Serial.print("====== Json: ");       //TestPoint
+    Serial.print(json);       //TestPoint
     Serial.print("======\n");       //TestPoint
     JsonDocument doc;
     DeserializationError error = deserializeJson(doc, input);
@@ -53,7 +58,7 @@ void loop() {
           Serial.print("\n======Lighted LED: ");       //TestPoint
           Serial.print(index);       //TestPoint
           Serial.print("======\n");       //TestPoint
-          // leds[index] = CRGB::Black;
+          leds[index] = CRGB::Black;
           delay(1000);
         }
       }
