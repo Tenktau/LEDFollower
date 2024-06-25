@@ -17,9 +17,10 @@ In total, there are three pieces of hardware involved, as detailed below: Using 
 
 ## 开发现况 / Development Status
 
-由于手头上的 WS2812b 灯带连接触点氧化、无法焊接导线从而成为方形矩阵，故暂时放弃二维矩阵的模式，转而以初步实现一维矩阵（5 个 LED 灯珠）为目标。
+> 由于手头上的 WS2812b 灯带连接触点氧化、无法焊接导线从而成为方形矩阵，故暂时放弃二维矩阵的模式，转而以初步实现一维矩阵（5 个 LED 灯珠）为目标。  
+> Since the existing WS2812b strip has oxidized connecting points and it is not possible to solder wires to make a square matrix, the two-dimensional matrix model has been abandoned for the time being in favor of a preliminary realization of a one-dimensional matrix (5 LED beads).
 
-Since the existing WS2812b strip has oxidized connecting points and it is not possible to solder wires to make a square matrix, the two-dimensional matrix model has been abandoned for the time being in favor of a preliminary realization of a one-dimensional matrix (5 LED beads).
+- 2024-06-25: 已实现一维 LED 矩阵跟踪功能 / Implemented 1D LED matrix tracking
 
 ### 待办 / TODO
 
